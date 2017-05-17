@@ -1,24 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using System.Net.Sockets;
 using Discord;
 using Discord.WebSocket;
 using Discord.Net.Providers.WS4Net;
-using Discord.Net.Providers.UDPClient;
+using System.IO;
 
 namespace Ferry_Bot
 {
     class Program
     {
         private static string token;
+        private static Stream stream;
         static void Main(string[] args) {
             if(args.Length == 0)
             {
                 System.Console.WriteLine("Please enter the bot's key in the arguments.");
             }
             token = args[0];
+            stream = new FileStream("weapon_skills.png", FileMode.Open);
             new Program().MainAsync().GetAwaiter().GetResult();
         }
 
@@ -47,12 +47,16 @@ namespace Ferry_Bot
 
         private async Task MessageReceived(SocketMessage message)
         {
+
+            string content = message.Content.ToLower();
+
+
             if (message.Content == "!ping")
             {
                 await message.Channel.SendMessageAsync("Pong!");
             }
 
-            if (message.Content == "!JST")
+            if (message.Content == "!jst")
             {
                 string sendme = getTimeJST();
                 await message.Channel.SendMessageAsync("It is currently: " + sendme + " in JST.");
@@ -67,6 +71,11 @@ namespace Ferry_Bot
             if (message.Content == "!salt")
             {
                 await message.Channel.SendMessageAsync("Who?");
+            }
+
+            if (content ==  "!weapon skills" || content == "!weapon_skills" || content == "skill_levels")
+            {
+                await message.Channel.SendFileAsync(stream, "HIIIII.png");
             }
         }
 
